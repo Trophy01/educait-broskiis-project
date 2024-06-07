@@ -53,9 +53,24 @@ class ChatScreen(ctk.CTkFrame):
         self.input.grid(row=2)
 
     def enter(self):
-        add_to_messages_and_gen(self.inp.get())
-        self.chat.update_messages(messages_chat)
-        self.chat.grid(row=1)
+        user_input = self.inp.get()
+        
+        # Check if the input starts with "# " to identify a heading
+        if user_input.startswith("# "):
+            self.add_heading(user_input)  # Call add_heading method for headings
+        else:
+            add_to_messages_and_gen(user_input)  # Add message as usual
+
+    def add_heading(self, heading_text):
+        # Remove the "#" and space from the heading text
+        heading_text = heading_text[2:]
+
+        # Create a label widget with the heading text
+        heading_label = ctk.CTkLabel(self, text=heading_text, font=("Arial", 16, "bold"))
+        heading_label.pack()
+
+        # Clear the input field after adding the heading
+        self.inp.set("")
 
 # Main Application
 if __name__ == "__main__":
