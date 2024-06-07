@@ -1,46 +1,21 @@
 import customtkinter as ctk
-from constants import PADDING_LARGE, PADDING_SMALL
-from llm import add_to_messages_and_gen, messages_chat
+import time
 
-class Message(ctk.CTkFrame):
-    def __init__(self, master, title, text, fg_color="white", **kwargs):
+class AnimatedLabel(ctk.CTkLabel):
+    def __init__(self, master, text, interval=0.1, **kwargs):
         super().__init__(master, **kwargs)
-        self.title = ctk.CTkLabel(self, text=title, fg_color=fg_color)
-        self.text = ctk.CTkLabel(self, text=text)
-        self.title.pack(padx=PADDING_SMALL, pady=PADDING_SMALL)
-        self.text.pack(padx=PADDING_SMALL, pady=PADDING_SMALL)
+        self.text = text
+        self.interval = interval
+        self.current_text = ""
+        self.idx = 0
+        self.animate()
 
-class MessageText(ctk.CTkFrame):
-    def __init__(self, master, text, **kwargs):
-        super().__init__(master, **kwargs)
-        self.text = ctk.CTkLabel(self, text=text)
-        self.text.pack(padx=PADDING_SMALL, pady=PADDING_SMALL)
-
-class Chat(ctk.CTkFrame):
-    def __init__(self, master, messages, **kwargs):
-        super().__init__(master, **kwargs)
-        self.message_widgets = []
-        self.update_messages(messages)
-
-    def update_messages(self, messages):
-        # Clear existing messages
-        for widget in self.message_widgets:
-            widget.destroy()
-        self.message_widgets = []
-        
-        # Add new messages
-        for msg in messages:
-            message = Message(master=self, title=msg["title"], text=msg["text"], fg_color="red")
-            message.pack(padx=PADDING_SMALL, pady=PADDING_SMALL)
-            self.message_widgets.append(message)
-
-class ChatInput(ctk.CTkFrame):
-    def __init__(self, master, inp, input_fn, **kwargs):
-        super().__init__(master, **kwargs)
-        self.input = ctk.CTkEntry(self, textvariable=inp)
-        self.input.grid(column=0, row=0, padx=PADDING_SMALL, pady=PADDING_LARGE)
-        self.enter = ctk.CTkButton(self, text="Go", command=input_fn)
-        self.enter.grid(column=1, row=0, padx=PADDING_SMALL, pady=PADDING_LARGE)
+    def animate(self):
+        if self.idx < len(self.text):
+            self.current_text += self.text[self.idx]
+            self.config(text=self.current_text)
+            self.idx += 1
+            self.after(int(self.interval * 1000), self.animate)
 
 class ChatScreen(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
@@ -54,8 +29,12 @@ class ChatScreen(ctk.CTkFrame):
 
     def enter(self):
         add_to_messages_and_gen(self.inp.get())
-        self.chat.update_messages(messages_chat)
-        self.chat.grid(row=1)
+        self.animate_response("This is a sample response.")  # Replace with actual response
+
+    def animate_response(self, response_text):
+        response_label = AnimatedLabel(self, text="", fg="black", font=("Arial", 12))
+        response_label.pack()
+        response_label.animate_text(response_text)
 
 # Main Application
 if __name__ == "__main__":
