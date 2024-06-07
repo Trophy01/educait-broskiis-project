@@ -2,6 +2,20 @@ import customtkinter as ctk
 from constants import PADDING_LARGE, PADDING_SMALL
 from llm import add_to_messages_and_gen, messages_chat
 
+class ChatInput(ctk.CTkFrame):
+    def __init__(self, master, inp, input_fn, **kwargs):
+        super().__init__(master, **kwargs)
+
+        # Create a text input field with rounded corners
+        self.input = ctk.CTkEntry(self, textvariable=inp, corner_radius=10)
+        self.input.grid(column=0, row=0, padx=PADDING_SMALL, pady=PADDING_LARGE)
+
+        # Create a button
+        self.enter = ctk.CTkButton(self, text="Go", command=input_fn)
+        self.enter.grid(column=1, row=0, padx=PADDING_SMALL, pady=PADDING_LARGE)
+
+# Other classes and main application code remain the same...
+
 class Message(ctk.CTkFrame):
     def __init__(self, master, title, text, fg_color="white", **kwargs):
         super().__init__(master, **kwargs)
@@ -33,14 +47,6 @@ class Chat(ctk.CTkFrame):
             message = Message(master=self, title=msg["title"], text=msg["text"], fg_color="red")
             message.pack(padx=PADDING_SMALL, pady=PADDING_SMALL)
             self.message_widgets.append(message)
-
-class ChatInput(ctk.CTkFrame):
-    def __init__(self, master, inp, input_fn, **kwargs):
-        super().__init__(master, **kwargs)
-        self.input = ctk.CTkEntry(self, textvariable=inp)
-        self.input.grid(column=0, row=0, padx=PADDING_SMALL, pady=PADDING_LARGE)
-        self.enter = ctk.CTkButton(self, text="Go", command=input_fn)
-        self.enter.grid(column=1, row=0, padx=PADDING_SMALL, pady=PADDING_LARGE)
 
 class ChatScreen(ctk.CTkFrame):
     def __init__(self, master, **kwargs):
