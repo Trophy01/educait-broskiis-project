@@ -50,7 +50,6 @@ class ChatInput(customtkinter.CTkFrame):
 class ChatScreen(customtkinter.CTkFrame):
     def __init__(self, master, **kwargs):
         super().__init__(master, **kwargs);
-        self.messages = messages
         self.inp = customtkinter.StringVar();
         self.inp.set("");
 
